@@ -5,17 +5,22 @@ from auth_data import token
 import traceback
 
 
+# ----------------------тут запросы к API бирже и узнает курс криптовалют-----------------------------------------------
+
+
 def get_doge():
     req = requests.get("https://yobit.net/api/3/ticker/doge_usd")
     response = req.json()
     sell_price = response["doge_usd"]["sell"]
     print(f"{datetime.now().strftime('%Y-%m-%d %H:%M')}\nSell DOGE price: {sell_price}")
 
+
 def get_btc():
     req = requests.get("https://yobit.net/api/3/ticker/btc_usd")
     response = req.json()
     sell_price = response["btc_usd"]["sell"]
     print(f"{datetime.now().strftime('%Y-%m-%d %H:%M')}\nSell BTC price: {sell_price}")
+
 
 def get_eth():
     req = requests.get("https://yobit.net/api/3/ticker/eth_usd")
@@ -24,16 +29,41 @@ def get_eth():
     print(f"{datetime.now().strftime('%Y-%m-%d %H:%M')}\nSell ETH price: {sell_price}")
 
 
+
+
+
+# ---------------------------тут стартовые команды для общения с ботом--------------------------------------------------
+
+
 bot = telebot.TeleBot(token)
+
 
 @bot.message_handler(commands=["start"])
 def start_message(message):
-    bot.send_message(message.chat.id,"Hello friend! Write the '/doge, /btc or /eth' to find out the cost of DOGE BTC OR ETH!")
+    bot.send_message(message.chat.id, "Этот самурай пока мало что может, но я работаю над его функционалом. Напиши /ls")
 
 
+@bot.message_handler(commands=["ls"])
+def main_message(message):
+    bot.send_message(message.chat.id, "/rate-курсы крипты🔣\n/help - помощь🗿\n/file - файлохранилище📦")
 
+
+@bot.message_handler(commands=["help"])
+def help_message(message):
+    bot.send_message(message.chat.id, "Для получения помощи напишите @Code_Samurai")
+
+
+# -----------------------выводит на выбор 3 монеты для получения информации об их курсе---------------------------------
+
+
+@bot.message_handler(commands=["rate"])
+def start_message(message):
+    bot.send_message(message.chat.id, "/doge - |DogeCoin \n/btc -  |BitCoin \n/eth - |Ethereum")
+
+
+# ----------------------команды для вывода курса монет------------------------------------------------------------------
 @bot.message_handler(commands=["doge"])
-def senddoge_text(message):
+def doge_text(message):
     try:
         req = requests.get("https://yobit.net/api/3/ticker/doge_usd")
         response = req.json()
@@ -51,43 +81,77 @@ def senddoge_text(message):
             "Damn...Something was wrong..."
         )
 
+
 @bot.message_handler(commands=["btc"])
-def sendbtc_text(message):
-        try:
-            req = requests.get("https://yobit.net/api/3/ticker/btc_usd")
-            response = req.json()
-            sell_price = response["btc_usd"]["sell"]
-            bot.send_message(
-                message.chat.id,
-                f"{datetime.now().strftime('%Y-%m-%d %H:%M')}\nSell BTC price: {sell_price}"
-            )
+def btc_text(message):
+    try:
+        req = requests.get("https://yobit.net/api/3/ticker/btc_usd")
+        response = req.json()
+        sell_price = response["btc_usd"]["sell"]
+        bot.send_message(
+            message.chat.id,
+            f"{datetime.now().strftime('%Y-%m-%d %H:%M')}\nSell BTC price: {sell_price}"
+        )
 
 
-        except Exception as e:
-            traceback.print_exc(e)
-            bot.send_message(
-                message.chat.id,
-                "Damn...Something was wrong..."
-            )
+    except Exception as e:
+        traceback.print_exc(e)
+        bot.send_message(
+            message.chat.id,
+            "Damn...Something was wrong..."
+        )
 
 
 @bot.message_handler(commands=["eth"])
-def sendeth_text(message):
-        try:
-            req = requests.get("https://yobit.net/api/3/ticker/eth_usd")
-            response = req.json()
-            sell_price = response["eth_usd"]["sell"]
-            bot.send_message(
-                message.chat.id,
-                f"{datetime.now().strftime('%Y-%m-%d %H:%M')}\nSell ETH price: {sell_price}"
-            )
+def eth_text(message):
+    try:
+        req = requests.get("https://yobit.net/api/3/ticker/eth_usd")
+        response = req.json()
+        sell_price = response["eth_usd"]["sell"]
+        bot.send_message(
+            message.chat.id,
+            f"{datetime.now().strftime('%Y-%m-%d %H:%M')}\nSell ETH price: {sell_price}"
+        )
 
-        except Exception as e:
-            traceback.print_exc(e)
-            bot.send_message(
-                message.chat.id,
-                "Damn...Something was wrong..."
-            )
+    except Exception as e:
+        traceback.print_exc(e)
+        bot.send_message(
+            message.chat.id,
+            "Damn...Something was wrong..."
+        )
+
+
+# --------------------------------------------------тут все что связанно с отправкой фото и файлами---------------------
+
+
+# @bot.message_handler(commands=["photo"])
+# def photo(message):
+#   """
+#
+#   :type message: photo
+#  """
+# with open(r"C:\Users\te1ho\Desktop\tmp\1234.jpg", "rb") as photo:
+#    bot.send_photo(message.chat.id, photo)
+# ----------------------------ниже бот сохроняет по указаному пути файлы которые ему отправят---------------------------
+
+
+
+@bot.message_handler(content_types=['document'])
+def save_file(message):
+    try:
+        chat_id = message.chat.id
+        file_info = bot.get_file(message.document.file_id)
+        downloaded_file = bot.download_file(file_info.file_path)
+
+        src = 'C:/tmp/' + message.document.file_name
+        with open(src, 'wb') as new_file:
+            new_file.write(downloaded_file)
+
+        bot.reply_to(message, "Пожалуй, я сохраню это")
+    except Exception as e:
+        bot.reply_to(message, e)
+
+
 
 
 
@@ -95,4 +159,4 @@ if __name__ == '__main__':
     try:
         bot.polling(none_stop=True)
     except:
-        pass
+        ...
