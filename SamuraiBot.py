@@ -136,20 +136,20 @@ def eth_text(message):
 
 
 
-@bot.message_handler(content_types=['document'])
-def save_file(message):
+@bot.message_handler(content_types=["document", "video", "audio"])
+def handle_files(message):
     try:
-        chat_id = message.chat.id
-        file_info = bot.get_file(message.document.file_id)
-        downloaded_file = bot.download_file(file_info.file_path)
+        document_id = message.document.file_id
+        file_info = bot.get_file(document_id)
 
-        src = 'C:/tmp/' + message.document.file_name
-        with open(src, 'wb') as new_file:
-            new_file.write(downloaded_file)
+        print(document_id)  # Выводим file_id
+        print(f'http://api.telegram.org/file/bot{token}/{file_info.file_path}')  # Выводим ссылку на файл
 
-        bot.reply_to(message, "Пожалуй, я сохраню это")
-    except Exception as e:
-        bot.reply_to(message, e)
+        bot.send_message(message.chat.id, document_id)  # Отправляем пользователю file_id
+
+
+    except:
+        ...
 
 
 
