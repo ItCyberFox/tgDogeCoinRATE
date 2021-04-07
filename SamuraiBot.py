@@ -1,11 +1,18 @@
-import requests
-from datetime import datetime
-import telebot
-from auth_data import token
 import traceback
+from datetime import datetime
+
+import requests
+import telebot
+from telebot import types
+
+from auth_data import token
 
 
-# ----------------------тут запросы к API бирже и узнает курс криптовалют-----------------------------------------------
+def get_rub():
+    req = requests.get("https://yobit.net/api/3/ticker/usd_rur")
+    response = req.json()
+    sell_price = response["usd_rur"]["sell"]
+    print(f"{datetime.now().strftime('%Y-%m-%d %H:%M')}\nSell DOGE price: {sell_price}")
 
 
 def get_doge():
@@ -29,9 +36,6 @@ def get_eth():
     print(f"{datetime.now().strftime('%Y-%m-%d %H:%M')}\nSell ETH price: {sell_price}")
 
 
-
-
-
 # ---------------------------тут стартовые команды для общения с ботом--------------------------------------------------
 
 
@@ -40,12 +44,37 @@ bot = telebot.TeleBot(token)
 
 @bot.message_handler(commands=["start"])
 def start_message(message):
-    bot.send_message(message.chat.id, "Этот самурай пока мало что может, но я работаю над его функционалом. Напиши /ls")
+    chat_id = message.chat.id
+    print(chat_id)
+
+    print(message.text)
+
+    try:
+
+        bot.send_message(message.chat.id,
+                         "Этот самурай пока мало что может, но я работаю над его функционалом. Напиши /ls")
+
+
+    except Exception as e:
+        pass
 
 
 @bot.message_handler(commands=["ls"])
 def main_message(message):
-    bot.send_message(message.chat.id, "/rate-курсы крипты🔣\n/help - помощь🗿\n/file - файлохранилище📦")
+    bot.send_message(message.chat.id,
+                     "/rate-курсы крипты🔣\n/help - помощь🗿\n/file - файлохранилище📦\n /pay - Оплатить скрипт")
+
+
+@bot.message_handler(commands=["pay"])
+def pay_qiwi(message):
+    bot.send_message(message.chat.id,
+                     "🛠|Оплатить скрипт:  \n📲|https://qiwi.com/p/79167537704\n💳|price:30$\n📨|оставьте свой тг в "
+                     "коментариях к платежу")
+
+
+@bot.message_handler(commands=["file"])
+def file(message):
+    bot.send_message(message.chat.id, "💾отправь файл💾\n📫я пришлю тебе ключ📫\n📭отправь мне его, и получишь свой файл📭")
 
 
 @bot.message_handler(commands=["help"])
@@ -58,7 +87,7 @@ def help_message(message):
 
 @bot.message_handler(commands=["rate"])
 def start_message(message):
-    bot.send_message(message.chat.id, "/doge - |DogeCoin \n/btc -  |BitCoin \n/eth - |Ethereum")
+    bot.send_message(message.chat.id, "/doge - |DogeCoin \n/btc -  |BitCoin \n/eth - |Ethereum\n/rub - |Ruble")
 
 
 # ----------------------команды для вывода курса монет------------------------------------------------------------------
@@ -121,8 +150,26 @@ def eth_text(message):
         )
 
 
-# --------------------------------------------------тут все что связанно с отправкой фото и файлами---------------------
+@bot.message_handler(commands=["rub"])
+def rub_text(message):
+    try:
+        req = requests.get("https://yobit.net/api/3/ticker/usd_rur")
+        response = req.json()
+        sell_price = response["usd_rur"]["sell"]
+        bot.send_message(
+            message.chat.id,
+            f"{datetime.now().strftime('%Y-%m-%d %H:%M')}\nSell RUB price: {sell_price}"
+        )
 
+    except Exception as e:
+        traceback.print_exc(e)
+        bot.send_message(
+            message.chat.id,
+            "Damn...Something was wrong..."
+        )
+
+
+# --------------------------------------------------тут все что связанно с отправкой фото и файлами---------------------
 
 # @bot.message_handler(commands=["photo"])
 # def photo(message):
@@ -133,7 +180,6 @@ def eth_text(message):
 # with open(r"C:\Users\te1ho\Desktop\tmp\1234.jpg", "rb") as photo:
 #    bot.send_photo(message.chat.id, photo)
 # ----------------------------ниже бот сохраняет по указаному пути файлы которые ему отправят---------------------------
-
 
 
 @bot.message_handler(content_types=["document", "video", "audio"])
@@ -147,12 +193,20 @@ def handle_files(message):
 
         bot.send_message(message.chat.id, document_id)  # Отправляем пользователю file_id
 
-
     except:
         ...
 
 
+@bot.message_handler(content_types=["text"])
+def send_file(message):
+    try:
+        ss = message.text
+        bot.send_document(message.chat.id, ss)
 
+
+
+    except:
+        ...
 
 
 if __name__ == '__main__':
@@ -160,3 +214,4 @@ if __name__ == '__main__':
         bot.polling(none_stop=True)
     except:
         ...
+
