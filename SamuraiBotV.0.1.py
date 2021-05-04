@@ -196,7 +196,7 @@ def handle_files(message):
     except:
         ...
 
-
+# бот принимает file_id и отправляет файл привязанный к нему
 @bot.message_handler(content_types=["text"])
 def send_file(message):
     try:
