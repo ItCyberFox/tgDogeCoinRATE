@@ -93,6 +93,7 @@ def start_message(message):
 # ----------------------команды для вывода курса монет------------------------------------------------------------------
 @bot.message_handler(commands=["doge"])
 def doge_text(message):
+img = 'https://imbt.ga/k2FbpsadBN'
     try:
         req = requests.get("https://yobit.net/api/3/ticker/doge_usd")
         response = req.json()
