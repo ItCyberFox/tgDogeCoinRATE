@@ -99,10 +99,11 @@ def doge_text(message):
         sell_price = response["doge_usd"]["sell"]
         bot.send_message(
             message.chat.id, f"{datetime.now().strftime('%Y-%m-%d %H:%M')}\n 🧡𝐒𝐞𝐥𝐥 𝐃𝐎𝐆𝐄 𝐩𝐫𝐢𝐜𝐞: {sell_price}\n "
-                            f"🧡DogePower[.]({img})", parse_mode='markdown'
+                            f"🧡𝐃𝐨𝐠𝐞𝐏𝐨𝐰𝐞𝐫🧡[.]({img})", parse_mode='markdown'
 
                              
         )
+
 
 
     except Exception as e:
