@@ -87,7 +87,7 @@ def help_message(message):
 
 @bot.message_handler(commands=["rate"])
 def start_message(message):
-    bot.send_message(message.chat.id, "/doge - |DogeCoin \n/btc -  |BitCoin \n/eth - |Ethereum\n/rub - |Ruble")
+    bot.send_message(message.chat.id, "/doge - |DogeCoin \n/btc -  |BitCoin \n/eth - |Ethereum\n/dol - |Dollar")
 
 
 # ----------------------команды для вывода курса монет------------------------------------------------------------------
@@ -160,16 +160,20 @@ def eth_text(message):
         )
 
 
-@bot.message_handler(commands=["rub"])
+@bot.message_handler(commands=["dol"])
 def rub_text(message):
+    img3 = 'https://imbt.ga/qXoyNvGMAi'
     try:
         req = requests.get("https://yobit.net/api/3/ticker/usd_rur")
         response = req.json()
         sell_price = response["usd_rur"]["sell"]
         bot.send_message(
             message.chat.id,
-            f"{datetime.now().strftime('%Y-%m-%d %H:%M')}\nSell RUB price: {sell_price}"
+            f"{datetime.now().strftime('%Y-%m-%d %H:%M')}\n 💰𝐒𝐞𝐥𝐥 𝐃𝐨𝐥𝐥𝐚𝐫 𝐩𝐫𝐢𝐜𝐞: {sell_price}\n "
+            f"💰𝐜𝐚𝐬𝐡[.]({img3})", parse_mode='markdown'
+
         )
+
 
     except Exception as e:
         traceback.print_exc(e)
