@@ -140,13 +140,16 @@ def btc_text(message):
 
 @bot.message_handler(commands=["eth"])
 def eth_text(message):
+    img2 = 'https://imbt.ga/eWq2gG3pIM'
     try:
         req = requests.get("https://yobit.net/api/3/ticker/eth_usd")
         response = req.json()
         sell_price = response["eth_usd"]["sell"]
         bot.send_message(
             message.chat.id,
-            f"{datetime.now().strftime('%Y-%m-%d %H:%M')}\nSell ETH price: {sell_price}"
+            f"{datetime.now().strftime('%Y-%m-%d %H:%M')}\n 🟣𝐒𝐞𝐥𝐥 𝐄𝐓𝐇 𝐩𝐫𝐢𝐜𝐞: {sell_price}\n "
+            f"🟣𝐝𝐞𝐟𝐄𝐓𝐇[.]({img2})", parse_mode='markdown'
+
         )
 
     except Exception as e:
