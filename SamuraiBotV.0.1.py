@@ -116,13 +116,16 @@ def doge_text(message):
 
 @bot.message_handler(commands=["btc"])
 def btc_text(message):
+    img1 = 'https://imbt.ga/htharlV3pr'
     try:
         req = requests.get("https://yobit.net/api/3/ticker/btc_usd")
         response = req.json()
         sell_price = response["btc_usd"]["sell"]
         bot.send_message(
             message.chat.id,
-            f"{datetime.now().strftime('%Y-%m-%d %H:%M')}\nSell BTC price: {sell_price}"
+            f"{datetime.now().strftime('%Y-%m-%d %H:%M')}\n 🟡𝐒𝐞𝐥𝐥 𝐁𝐓𝐂 𝐩𝐫𝐢𝐜𝐞: {sell_price}\n "
+            f"🟡𝐃𝐚𝐝𝐝𝐲𝐁𝐢𝐭[.]({img1})", parse_mode='markdown'
+
         )
 
 
